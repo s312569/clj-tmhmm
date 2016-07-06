@@ -4,7 +4,7 @@ A Clojure library to run TMHMM and parse results.
 
 ## Installation
 
-Leiningren: [clj-tmhmm "0.1.0"]
+Leiningren: [clj-tmhmm "0.1.1"]
 
 In project: (:require [clj-tmhmm.core :as tm])
 

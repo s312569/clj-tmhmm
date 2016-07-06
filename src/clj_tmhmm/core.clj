@@ -45,11 +45,13 @@
   TMHMM 'short' format."
   [coll outfile]
   (let [c (atom 0)
-        wd (fs/temp-dir "tmhmm-wd")]
+        wd (fs/temp-dir "tmhmm-wd")
+        fl (atom [])]
     (try
       (doall
        (pmap #(let [o (fs/absolute (str outfile "-" (swap! c inc) ".tmhmm"))
                     in (fs/absolute (fa/fasta->file % (fs/temp-file "tmhmm-in-")))]
+                (swap! fl conj o)
                 (try
                   (with-open [out (io/output-stream o)]
                     (let [tm @(sh ["tmhmm" "-workdir" (str wd) "-short" (str in)]
@@ -57,11 +59,14 @@
                       (if (= 0 (:exit tm))
                         o
                         (if (:err tm)
-                          (throw (Throwable. (str "TMHMM error: " (:err tm))))
-                          (throw (Throwable. (str "Exception: " (:exception tm))))))))
+                          (throw (Exception. (str "TMHMM error: " (:err tm))))
+                          (throw (Exception. (str "Exception: " (:exception tm))))))))
                   (finally
                     (fs/delete in))))
              (partition-all 10000 coll)))
+      (catch Exception e
+        (doseq [f @fl] (fs/delete f))
+        (throw e))
       (finally
         (fs/delete-dir wd)))))
 
