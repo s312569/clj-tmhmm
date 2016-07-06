@@ -11,7 +11,7 @@ In project: (:require [clj-tmhmm.core :as tm])
 ## Usage
 
 To run TMHMM (assuming the TMHMM perl script is in your path) on a
-collection of fasta-sequences (see `clj-fasta`):
+collection of fasta sequences (see `clj-fasta`):
 ```clojure
 user> (with-open [r (io/reader "/path/to/fasta-file.fasta")]
         (tmhmm (fasta-seq r) "/path/out-prefix"))
@@ -24,13 +24,13 @@ To run TMHMM on a file of fasta formatted protein sequences use
 `tmhmm-file` which returns a file object containing the results in
 the TMHMM 'short' format:
 ```clojure
-user> (signalp-file "/path/to/fasta-file.fasta" "/path/out-prefix")
+user> (tmhmm-file "/path/to/fasta-file.fasta" "/path/out-prefix")
 (#object[java.io.File 0x1e6855b2 "/path/out.prefix-1.tmhmm"])
 user>
 ``` 
 
 To parse a TMHMM results file that is in the TMHMM 'short' format
-use `signalp-seq` which returns a lazy list of maps with the result of
+use `tmhmm-seq` which returns a lazy list of maps with the result of
 TMHMM on each protein:
 ```clojure
 user> (with-open [r (io/reader "path/to/result/file")]
@@ -43,7 +43,8 @@ user>
 ```
 
 If you have a collection of fasta sequences, `filter-tmhmm` will
-filter sequences containing a signal sequence:
+filter sequences containing >= to the specified number of
+trans-membrane domains:
 ```clojure
 user> (with-open [r (io/reader "/path/to/fasta-file.fasta")]
                     (filter-tmhmm (fa/fasta-seq r)))
